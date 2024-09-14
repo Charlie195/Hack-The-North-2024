@@ -1,9 +1,10 @@
 import "./App.css"
 
 import React from "react"
+import Home from "./components/home"
 
 function App() {
-  return <div className="w-screen h-screen"></div>
+  return <Home />
 }
 
 export default App
