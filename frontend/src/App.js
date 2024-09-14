@@ -1,16 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css"
 
-import React from 'react';
-import { Flex, Input } from 'antd'
-import { Button } from "antd";
+import React from "react"
 
 function App() {
-  return (
-    <Flex gap={12}>
-      <Input placeholder="Outlined" />
-    </Flex>
-  );
+  return <div className="w-screen h-screen"></div>
 }
 
-export default App;
+export default App
