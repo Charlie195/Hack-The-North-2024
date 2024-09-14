@@ -1,13 +1,9 @@
 import React from "react"
 
 import { Input} from "antd"
-import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 
-// for shared cart dropdown
-type MenuItem = Required<MenuProps>['items'][number];
-
-const items: MenuItem[] = [
+const items = [
   {
     key: 'sub1',
     label: 'Shared Cart',
@@ -35,8 +31,8 @@ const style = {
   height: 1000, // change it later
 };
 
-const Home:React.FC = () => {
-  const onClick: MenuProps['onClick'] = (e) => {
+const Home = () => {
+  const onClick = (e) => {
     console.log('click ', e);
   };
   const [container, setContainer] = React.useState(null);
