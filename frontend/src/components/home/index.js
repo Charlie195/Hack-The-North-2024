@@ -171,7 +171,7 @@ const Home = () => {
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen">
       <div>
-        <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
+        <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-[45vh] left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
       </div>
       <div className="flex-1 overflow-auto">
         <div className="">
@@ -207,12 +207,10 @@ const Home = () => {
             </div>
           </Modal>
 
-          <div className="fixed right-4">
             {!isLoading && <>
                 <LoginButton />
                 <LogoutButton />
             </>}
-          </div>
         </div>
         <div className="flex flex-col items-center max-h-[680px] overflow-y-scroll">
           {chatHistory?.map((c, i) => (
@@ -289,6 +287,7 @@ const Home = () => {
       </div>
       <div className="py-8 px-4 flex justify-center">
         <Input
+          hidden={!isAuthenticated}
           placeholder="What fills your cart today?"
           className="h-10 w-1/2 shadow-lg"
           value={input}
