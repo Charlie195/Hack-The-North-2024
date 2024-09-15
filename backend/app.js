@@ -68,9 +68,11 @@ app.get("/getCart", (req, res) => {
     });
 })
 
-app.post("/addToIndividualBasket", (req, res) => {
+app.post("/addToCart", (req, res) => {
     const email = req.body.email;
     const itemData = req.body.itemData;
+
+    console.log(itemData)
 
     db.collection('users').updateOne(
         { email: email },

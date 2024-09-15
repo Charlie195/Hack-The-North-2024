@@ -6,9 +6,17 @@ import { IoIosCheckmark } from "react-icons/io"
 import { RiRobot2Line } from "react-icons/ri"
 import InfiniteScroll from "react-infinite-scroll-component"
 import Typewriter from "typewriter-effect"
+import axios from "axios"
+import { useAuth0 } from "@auth0/auth0-react"
+import LoginButton from "../loginButton"
+import LogoutButton from "../logoutButton"
 
 const Home = () => {
-  // const { user } = useAuth0()
+  const [hideLogo, setHideLogo] = useState(false)
+
+  const { user, isAuthenticated, isLoading } = useAuth0();
+  console.log("here: ", isAuthenticated)
+
   const prompt =
     "Respond to this prompt. Then, at the end, give a list of three COMMON-SEPARATED (IT MUST BE COMMA SEPARATED) products that the user could buy. NO EXPLANATION, NO RECEIPE. NO text other than the three items (THIS IS A MUST)."
   const [chatHistory, setChatHistory] = useState()
@@ -20,7 +28,18 @@ const Home = () => {
   const [options, setOptions] = useState()
   const [optionsSelected, setOptionsSelected] = useState([false, false, false])
   const [input, setInput] = useState("")
-  const onAddToCart = (i) => {
+  const onAddToCart = async (i, itemName) => {
+    console.log(itemName)
+    const itemData = {
+      name: itemName,
+      cost: 7.99,
+    }
+
+    await axios.post("http://localhost:5001/addToCart", {
+      email: "charlie@gmail.com",
+      itemData: itemData,
+    })
+
     setOptionsSelected(optionsSelected.map((t, j) => (i === j ? true : t)))
   }
   // shared cart
@@ -111,6 +130,13 @@ const Home = () => {
 
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen">
+      <div className="flex justify-end">
+        {/* {isAuthenticated ? <LogoutButton /> : <LoginButton />} */}
+        <LoginButton />
+      </div>
+      <div>
+        <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
+      </div>
       <div className="flex-1 overflow-auto">
         <div className="flex justify-between">
           {/* <svg
@@ -251,13 +277,13 @@ const Home = () => {
                                 : "hover:bg-slate-100 hover:cursor-pointer hover:border-slate-500 hover:text-slate-800"
                             }`}
                             onClick={() => {
-                              onAddToCart(i)
+                              onAddToCart(i, o.trim().replace(/[.,]/g, ""))
                             }}
                           >
                             {optionsSelected[i] ? (
                               <IoIosCheckmark className="text-green-500 h-20 w-20" />
                             ) : (
-                              o
+                              o.trim().replace(/[.,]/g, "")
                             )}
                           </div>
                         ))}
@@ -293,6 +319,7 @@ const Home = () => {
                 { value: input, type: "user" },
               ])
               askGroq()
+              setHideLogo(true)
             }
           }}
         />
