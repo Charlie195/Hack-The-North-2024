@@ -1,10 +1,9 @@
 import { ShoppingCartOutlined } from "@ant-design/icons"
-import { Button, Divider, Input, List, Modal, Popover, Skeleton } from "antd"
+import { Button, Divider, Input, List, Modal, Popover, Table, Tag, Space} from "antd"
 import Groq from "groq-sdk"
 import React, { useEffect, useState } from "react"
 import { IoIosCheckmark } from "react-icons/io"
 import { RiRobot2Line } from "react-icons/ri"
-import InfiniteScroll from "react-infinite-scroll-component"
 import Typewriter from "typewriter-effect"
 import axios from "axios"
 import { useAuth0 } from "@auth0/auth0-react"
@@ -45,10 +44,24 @@ const Home = () => {
       itemData: itemData,
     })
   }
+  const getCart = async (email) => {
+    try {
+      const response = await axios.post('http://localhost:5001/getCart', {
+        email: "charlie@gmail.com"
+      });
+      const cartData = response.data;
+      //console.log('Cart Data:', cartData);
+      return cartData;
+    } catch (error) {
+      console.error('Error fetching cart data:', error);
+    }
+  };
+
   // shared cart
   const [isModalOpen, setIsModalOpen] = useState(false)
   const showModal = () => {
     setIsModalOpen(true)
+    console.log("ok clicked")
   }
   const handleOk = () => {
     setIsModalOpen(false)
@@ -56,29 +69,27 @@ const Home = () => {
   const handleCancel = () => {
     setIsModalOpen(false)
   }
+  const [myCartData, setMyCartData] = useState([]);
   // shared cart table scroll stuff
-  const [loading, setLoading] = useState(false)
-  const [data, setData] = useState([])
-  const loadMoreData = () => {
-    if (loading) {
-      return
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text) => <a>{text}</a>,
     }
-    setLoading(true)
-    fetch(
-      "https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo"
-    )
-      .then((res) => res.json())
-      .then((body) => {
-        setData([...data, ...body.results])
-        setLoading(false)
-      })
-      .catch(() => {
-        setLoading(false)
-      })
-  }
-  useEffect(() => {
-    loadMoreData()
-  }, [])
+  ];
+  const data = [
+    {
+      name: 'John Brown'
+    },
+    {
+      name: 'Jim Green'
+    },
+    {
+      name: 'Joe Black'
+    },
+  ];
 
   const processString = (s) => {
     for (let i = s.length - 1; i >= 0; i--) {
@@ -131,6 +142,25 @@ const Home = () => {
   //   console.log(chatHistory)
   // }, [chatHistory])
 
+  useEffect(() => {
+    const fetchCartData = async () => {
+      if (isModalOpen) {
+        const myCartData = await getCart();
+        // if (Array.isArray(myCartData)) {
+        //   console.log('myCartData is an array:', myCartData);
+        // } else {
+        //   console.log('myCartData is not an array:', myCartData);
+        // }
+        const formattedData = myCartData.map(item => ({
+          name: item.name
+        }));
+        setMyCartData(formattedData);
+        console.log("MYcartData:", myCartData[0].name);
+      }
+    };
+    fetchCartData();
+  }, [isModalOpen]);
+
   console.log("Is Loading: ", isLoading)
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -171,45 +201,8 @@ const Home = () => {
             onOk={handleOk}
             onCancel={handleCancel}
           >
-            <div
-              id="scrollableDiv"
-              style={{
-                height: 400,
-                overflow: "auto",
-                padding: "0 16px",
-                border: "1px solid rgba(140, 140, 140, 0.35)",
-              }}
-            >
-              <InfiniteScroll
-                dataLength={data.length}
-                next={loadMoreData}
-                hasMore={data.length < 50}
-                loader={
-                  <Skeleton
-                    avatar
-                    paragraph={{
-                      rows: 1,
-                    }}
-                    active
-                  />
-                }
-                endMessage={<Divider plain>End of everything</Divider>}
-                scrollableTarget="scrollableDiv"
-              >
-                <List
-                  dataSource={data}
-                  renderItem={(item) => (
-                    <List.Item key={item.email}>
-                      <List.Item.Meta
-                        avatar="icon"
-                        title="food name"
-                        description="desc."
-                      />
-                      <div>remove</div>
-                    </List.Item>
-                  )}
-                />
-              </InfiniteScroll>
+            <div>
+            <Table columns={columns} dataSource={myCartData} pagination={false} />
             </div>
           </Modal>
 
