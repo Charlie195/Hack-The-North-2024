@@ -8,6 +8,7 @@ import InfiniteScroll from "react-infinite-scroll-component"
 import Typewriter from "typewriter-effect"
 import axios from "axios"
 import { useAuth0 } from "@auth0/auth0-react"
+
 import LoginButton from "../loginButton"
 import LogoutButton from "../logoutButton"
 
@@ -15,7 +16,7 @@ const Home = () => {
   const [hideLogo, setHideLogo] = useState(false)
 
   const { user, isAuthenticated, isLoading } = useAuth0();
-  console.log("here: ", isAuthenticated)
+
 
   const prompt =
     "Respond to this prompt. Then, at the end, give a list of three COMMON-SEPARATED (IT MUST BE COMMA SEPARATED) products that the user could buy. NO EXPLANATION, NO RECEIPE. NO text other than the three items (THIS IS A MUST)."
@@ -124,11 +125,20 @@ const Home = () => {
   //   console.log(chatHistory)
   // }, [chatHistory])
 
+  console.log("Is Loading: ", isLoading)
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
+
+  console.log("here: ", user)
+
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen">
       <div className="flex justify-end">
-        {/* {isAuthenticated ? <LogoutButton /> : <LoginButton />} */}
-        <LoginButton />
+        {!isLoading && <>
+          <LoginButton />
+          <LogoutButton />
+        </>}
       </div>
       <div>
         <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
