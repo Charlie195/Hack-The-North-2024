@@ -1,5 +1,5 @@
 import { ShoppingCartOutlined } from "@ant-design/icons"
-import { Button, Divider, Input, List, Modal, Popover, Table, Tag, Space} from "antd"
+import { Button, Divider, Input, List, Modal, Popover, Table} from "antd"
 import Groq from "groq-sdk"
 import React, { useEffect, useState } from "react"
 import { IoIosCheckmark } from "react-icons/io"
@@ -16,6 +16,7 @@ const Home = () => {
 
   const { user, isAuthenticated, isLoading } = useAuth0();
 
+  const [container, setContainer] = React.useState(null);
 
   const prompt =
     "Respond to this prompt. Then, at the end, give a list of three COMMON-SEPARATED (IT MUST BE COMMA SEPARATED) products that the user could buy. NO EXPLANATION, NO RECEIPE. NO text other than the three items (THIS IS A MUST)."
@@ -69,8 +70,13 @@ const Home = () => {
   const handleCancel = () => {
     setIsModalOpen(false)
   }
+  const modalStyle = {
+    height: '500px',
+    overflow: 'auto'
+  };
+
+  // shared cart table
   const [myCartData, setMyCartData] = useState([]);
-  // shared cart table scroll stuff
   const columns = [
     {
       title: 'Name',
@@ -79,17 +85,20 @@ const Home = () => {
       render: (text) => <a>{text}</a>,
     }
   ];
-  const data = [
-    {
-      name: 'John Brown'
-    },
-    {
-      name: 'Jim Green'
-    },
-    {
-      name: 'Joe Black'
-    },
-  ];
+
+  // shared cart scroll
+  const containerStyle = {
+    width: '100%',
+    height: 100,
+    overflow: 'auto',
+    boxShadow: '0 0 0 1px #1677ff',
+    scrollbarWidth: 'thin',
+    scrollbarColor: 'unset',
+  };
+  const style = {
+    width: '100%',
+    height: 1000,
+  };
 
   const processString = (s) => {
     for (let i = s.length - 1; i >= 0; i--) {
@@ -169,7 +178,7 @@ const Home = () => {
   console.log("here: ", user)
 
   return (
-    <div className="flex flex-col bg-slate-50 min-h-screen">
+    <div className="flex flex-col bg-blue-300 min-h-screen">
       <div>
         <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-[45vh] left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
       </div>
@@ -191,7 +200,7 @@ const Home = () => {
             </svg> */}
           <Button
             onClick={showModal}
-            className="ml-4 mt-4 h-12 bg-grey shadow-lg fixed left-4"
+            className="ml-4 mt-4 h-12 bg-white shadow-lg fixed left-4"
             hidden={!isAuthenticated}
           >
             <ShoppingCartOutlined style={{ fontSize: "200%" }} />
@@ -201,10 +210,15 @@ const Home = () => {
             open={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}
+            bodyStyle = {modalStyle}
           >
-            <div>
-            <Table columns={columns} dataSource={myCartData} pagination={false} />
-            </div>
+          <div>
+            <Table 
+              columns={columns} 
+              dataSource={myCartData} 
+              pagination={false} 
+            />
+          </div>
           </Modal>
 
             {!isLoading && <>
@@ -289,7 +303,7 @@ const Home = () => {
         <Input
           hidden={!isAuthenticated}
           placeholder="What fills your cart today?"
-          className="h-10 w-1/2 shadow-lg"
+          className="h-16 w-1/2 shadow-lg bg-light-1 text-xl"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={async (e) => {
