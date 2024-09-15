@@ -47,7 +47,7 @@ const Home = () => {
   const getCart = async (email) => {
     try {
       const response = await axios.post('http://localhost:5001/getCart', {
-        email: "charlie@gmail.com"
+        email: user.email
       });
       const cartData = response.data;
       //console.log('Cart Data:', cartData);
