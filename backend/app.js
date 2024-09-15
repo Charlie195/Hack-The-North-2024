@@ -68,7 +68,7 @@ app.get("/getCart", (req, res) => {
     });
 })
 
-app.post("/addToIndividualBasket", (req, res) => {
+app.post("/addToCart", (req, res) => {
     const email = req.body.email;
     const itemData = req.body.itemData;
 
