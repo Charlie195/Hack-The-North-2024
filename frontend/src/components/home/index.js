@@ -80,7 +80,7 @@ const Home = () => {
         },
       ])
       setOptions(
-        processString(chatCompletion.choices[0]?.message?.content || "")?.[1]
+        processString(chatCompletion.choices[0]?.message?.content || "")?.[1].slice(0, 3)
       )
     } catch (error) {
       console.log("error: " + error)
@@ -91,6 +91,10 @@ const Home = () => {
     setShowOptions(false)
     return groq.chat.completions.create({
       messages: [
+        ...(chatHistory?.map((c) => ({
+          role: "user",
+          content: c.value,
+        })) ?? []),
         {
           role: "user",
           content: `${prompt} ${input}`,
@@ -210,7 +214,11 @@ const Home = () => {
                   <RiRobot2Line />
                 </div>
               )}
-              <div className={`flex-1 mt-2 w-3/4 flex flex-col items-center justify-around text-xl rounded-xl border-[1px] border-solid border-slate-200 p-6 ${c.type === "gpt" ? "bg-slate-100" : "bg-white"}`}>
+              <div
+                className={`flex-1 mt-2 w-3/4 flex flex-col items-center justify-around text-xl rounded-xl border-[1px] border-solid border-slate-200 p-6 ${
+                  c.type === "gpt" ? "bg-slate-100" : "bg-white"
+                }`}
+              >
                 {i === chatHistory.length - 1 && c.type === "gpt" ? (
                   <>
                     <div className="w-full">
@@ -237,10 +245,10 @@ const Home = () => {
                       <div className="flex w-fit space-x-10 mt-4">
                         {options?.map((o, i) => (
                           <div
-                            className={`flex items-center justify-around text-center text-slate-800 text-lg w-40 h-40 bg-slate-50 border-[1px] border-solid border-slate-300 rounded-lg duration-200 ${
+                            className={`flex items-center justify-around text-center text-slate-500 text-lg w-40 h-40 bg-slate-50 border-[1px] border-solid border-slate-300 rounded-lg duration-200 ${
                               optionsSelected[i]
                                 ? "border-green-500 bg-white"
-                                : "hover:bg-slate-100 hover:cursor-pointer hover:border-slate-500"
+                                : "hover:bg-slate-100 hover:cursor-pointer hover:border-slate-500 hover:text-slate-800"
                             }`}
                             onClick={() => {
                               onAddToCart(i)
@@ -273,7 +281,7 @@ const Home = () => {
       </div>
       <div className="py-8 px-4 flex justify-center">
         <Input
-          placeholder="Enter your request"
+          placeholder="What fills your cart today?"
           className="h-10 w-1/2 shadow-lg"
           value={input}
           onChange={(e) => setInput(e.target.value)}
