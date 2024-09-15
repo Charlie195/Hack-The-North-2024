@@ -1,6 +1,6 @@
 const Groq = require('groq-sdk');
 
-const groq = new Groq({apiKey: "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"});
+const groq = new Groq({apiKey: process.env.REACT_APP_API_KEY});
 
 async function main() {
     const completion = await groq.chat.completions
