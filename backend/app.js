@@ -72,6 +72,8 @@ app.post("/addToIndividualBasket", (req, res) => {
     const email = req.body.email;
     const itemData = req.body.itemData;
 
+    console.log(itemData)
+
     db.collection('users').updateOne(
         { email: email },
         { $push: { basket: itemData}},

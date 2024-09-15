@@ -3,8 +3,11 @@ import Groq from "groq-sdk"
 import React, { useState } from "react"
 import { IoIosCheckmark } from "react-icons/io"
 import Typewriter from "typewriter-effect"
+import axios from "axios"
 
 const Home = () => {
+  const [hideLogo, setHideLogo] = useState(false)
+
   // const { user } = useAuth0()
   const prompt =
     "Respond to this prompt. Then, at the end, give a list of three COMMON-SEPARATED (IT MUST BE COMMA SEPARATED) products that the user could buy. NO EXPLANATION, NO RECEIPE. NO text other than the three items (THIS IS A MUST)."
@@ -17,8 +20,16 @@ const Home = () => {
   const [options, setOptions] = useState()
   const [optionsSelected, setOptionsSelected] = useState([false, false, false])
   const [input, setInput] = useState("")
-  const onAddToCart = (i) => {
+  const onAddToCart = async (i, itemName) => {
+    console.log(itemName)
     setOptionsSelected(optionsSelected.map((t, j) => (i === j ? true : t)))
+
+    const itemData = {
+      name: itemName.trim(),
+      cost: 1.99
+    }
+
+    const res = await axios.post(`http://localhost:5001/addToIndividualBasket`, { email: "charlie@gmail.com", itemData: itemData });
   }
 
   const processString = (s) => {
@@ -58,7 +69,7 @@ const Home = () => {
   return (
     <div className="flex flex-col bg-primary min-h-screen">
       <div>
-        <img src="CollabCartLogo.png" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></img>
+        <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
       </div>
       <div className="flex-1 overflow-auto">
         <div className="flex justify-between">
@@ -139,7 +150,7 @@ const Home = () => {
                             : "hover:bg-slate-100 hover:cursor-pointer hover:border-green-500"
                         }`}
                         onClick={() => {
-                          onAddToCart(i)
+                          onAddToCart(i, o)
                         }}
                       >
                         {optionsSelected[i] ? (
@@ -170,6 +181,7 @@ const Home = () => {
             if (e.key === "Enter") {
               setInput("")
               askGroq()
+              setHideLogo(true)
             }
           }}
         />
