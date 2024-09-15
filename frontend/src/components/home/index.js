@@ -5,6 +5,7 @@ import { IoIosCheckmark } from "react-icons/io"
 import Typewriter from "typewriter-effect"
 
 const Home = () => {
+  // const { user } = useAuth0()
   const prompt =
     "Respond to this prompt. Then, at the end, give a list of three COMMON-SEPARATED (IT MUST BE COMMA SEPARATED) products that the user could buy. NO EXPLANATION, NO RECEIPE. NO text other than the three items (THIS IS A MUST)."
   const [chatHistory, setChatHistory] = useState()
@@ -26,16 +27,17 @@ const Home = () => {
         return [s.substr(0, i + 1), s.substr(i + 2).split(",")]
       }
     }
+    return ["Unable to retrieve a response. Tip: be specific.", []]
   }
 
   async function askGroq() {
     const chatCompletion = await getGroqChatCompletion()
     setChatHistory([
       ...(chatHistory ?? []),
-      processString(chatCompletion.choices[0]?.message?.content || "")[0],
+      processString(chatCompletion.choices[0]?.message?.content || "")?.[0],
     ])
     setOptions(
-      processString(chatCompletion.choices[0]?.message?.content || "")[1]
+      processString(chatCompletion.choices[0]?.message?.content || "")?.[1]
     )
   }
 
@@ -80,7 +82,7 @@ const Home = () => {
           <Popover
             content={
               <div className="w-52 h-96 bg-white rounded-lg">
-                <div></div>
+                {/* <div className="text-xs text-slate-400">{user.email}</div> */}
                 <div></div>
               </div>
             }
@@ -129,7 +131,7 @@ const Home = () => {
                 </div>
                 {showOptions && (
                   <div className="flex w-fit space-x-10 mt-4">
-                    {options.map((o, i) => (
+                    {options?.map((o, i) => (
                       <div
                         className={`flex items-center justify-around text-center text-slate-800 text-lg w-40 h-40 bg-slate-50 border-[1px] border-solid border-slate-300 rounded-lg duration-200 ${
                           optionsSelected[i]
@@ -152,7 +154,7 @@ const Home = () => {
               </>
             ) : (
               <>
-                <div>{c}</div>
+                <div className="w-full">{c}</div>
               </>
             )}
           </div>
