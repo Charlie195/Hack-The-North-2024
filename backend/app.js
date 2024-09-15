@@ -68,7 +68,7 @@ app.get("", (req, res) => {
 //     });
 // })
 
-app.get("/getCart", (req, res) => {
+app.post("/getCart", (req, res) => {
     const email = req.body.email;
 
     db.collection('users').findOne({ email: email })
