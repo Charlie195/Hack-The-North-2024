@@ -26,46 +26,58 @@ app.get("", (req, res) => {
         });
 });
 
+// app.get("/getCart", (req, res) => {
+//     const email = req.body.email;
+
+//     db.collection('carts').findOne(
+//         { cart_contributors: email }
+//     ).then((cart) => {
+//         const cartContributors = cart.cart_contributors;
+
+//         let cartData = [];
+        
+//         Promise.all(cartContributors.map(contributor => {
+//             return db.collection('users').findOne({ email: contributor })
+//                 .then(user => {
+//                     let userData = {
+//                         name: user.name,
+//                         basket: user.basket
+//                     };
+//                     console.log(userData);
+//                     return userData; // Return userData to be used in Promise.all
+//                 }).catch(err => {
+//                     console.log(err);
+//                     return err; // Handle error, but consider how you want to proceed in case of error
+//                 });
+//         })).then(results => {
+//             // // All promises have resolved, results is an array of userData
+//             // cartData.push(...results); // Spread operator to push each userData into cartData
+//             // cartData.push({
+//             //     sharedBasket: cart.shared_basket
+//             // });
+//             res.send(cartData);
+//         }).catch(err => {
+//             // Handle any error that occurred during the execution of any promise
+//             console.log(err);
+//             res.status(500).send(err);
+//         });
+//     })
+//     .catch((err) => {
+//         console.log(err);
+//         return err;
+//     });
+// })
+
 app.get("/getCart", (req, res) => {
     const email = req.body.email;
 
-    db.collection('carts').findOne(
-        { cart_contributors: email }
-    ).then((cart) => {
-        const cartContributors = cart.cart_contributors;
-
-        let cartData = [];
-        
-        Promise.all(cartContributors.map(contributor => {
-            return db.collection('users').findOne({ email: contributor })
-                .then(user => {
-                    let userData = {
-                        name: user.name,
-                        basket: user.basket
-                    };
-                    console.log(userData);
-                    return userData; // Return userData to be used in Promise.all
-                }).catch(err => {
-                    console.log(err);
-                    return err; // Handle error, but consider how you want to proceed in case of error
-                });
-        })).then(results => {
-            // // All promises have resolved, results is an array of userData
-            // cartData.push(...results); // Spread operator to push each userData into cartData
-            // cartData.push({
-            //     sharedBasket: cart.shared_basket
-            // });
-            res.send(cartData);
+    db.collection('users').findOne({ email: email })
+        .then(user => {
+            res.send(user.basket); // Return userData to be used in Promise.all
         }).catch(err => {
-            // Handle any error that occurred during the execution of any promise
             console.log(err);
-            res.status(500).send(err);
+            return err; // Handle error, but consider how you want to proceed in case of error
         });
-    })
-    .catch((err) => {
-        console.log(err);
-        return err;
-    });
 })
 
 app.post("/addToCart", (req, res) => {

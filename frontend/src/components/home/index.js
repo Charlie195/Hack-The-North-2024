@@ -36,12 +36,14 @@ const Home = () => {
       cost: 7.99,
     }
 
-    await axios.post("http://localhost:5001/addToCart", {
-      email: "charlie@gmail.com",
-      itemData: itemData,
-    })
 
     setOptionsSelected(optionsSelected.map((t, j) => (i === j ? true : t)))
+
+    await axios.post("http://localhost:5001/addToCart", {
+      email: user.email,
+      name: user.name,
+      itemData: itemData,
+    })
   }
   // shared cart
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -138,12 +140,6 @@ const Home = () => {
 
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen">
-      <div className="flex justify-end">
-        {!isLoading && <>
-          <LoginButton />
-          <LogoutButton />
-        </>}
-      </div>
       <div>
         <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
       </div>
@@ -217,30 +213,11 @@ const Home = () => {
             </div>
           </Modal>
 
-          <Popover
-            content={
-              <div className="w-52 h-96 bg-white rounded-lg">
-                {/* <div className="text-xs text-slate-400">{user.email}</div> */}
-                <div></div>
-              </div>
-            }
-            trigger="click"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-12 m-4 p-2 bg-white rounded-lg shadow-lg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
-            </svg>
-          </Popover>
+          
+          {!isLoading && <>
+              <LoginButton />
+              <LogoutButton />
+          </>}
         </div>
         <div className="flex flex-col items-center max-h-[680px] overflow-y-scroll">
           {chatHistory?.map((c, i) => (
