@@ -3,6 +3,11 @@ import Groq from "groq-sdk"
 import React, { useState } from "react"
 import { IoIosCheckmark } from "react-icons/io"
 import Typewriter from "typewriter-effect"
+import { Button, Modal } from 'antd';
+import { ShoppingCartOutlined } from '@ant-design/icons';
+import { useEffect } from 'react';
+import { Avatar, Divider, List, Skeleton } from 'antd';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Home = () => {
   // const { user } = useAuth0()
@@ -20,6 +25,38 @@ const Home = () => {
   const onAddToCart = (i) => {
     setOptionsSelected(optionsSelected.map((t, j) => (i === j ? true : t)))
   }
+  // shared cart
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  // shared cart table scroll stuff
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const loadMoreData = () => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    fetch('https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo')
+      .then((res) => res.json())
+      .then((body) => {
+        setData([...data, ...body.results]);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+  useEffect(() => {
+    loadMoreData();
+  }, []);
 
   const processString = (s) => {
     for (let i = s.length - 1; i >= 0; i--) {
@@ -59,8 +96,7 @@ const Home = () => {
     <div className="flex flex-col bg-gray-300 min-h-screen">
       <div className="flex-1 overflow-auto">
         <div className="flex justify-between">
-          <button aria-label="Open Shopping Cart" onclick="handleButtonClick()">
-            <svg
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -73,8 +109,52 @@ const Home = () => {
                 strokeLinejoin="round"
                 d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
               />
-            </svg>
-          </button>
+            </svg> */}
+          <Button onClick={showModal} className="ml-4 mt-4 h-12 bg-grey shadow-lg">
+            <ShoppingCartOutlined style={{ fontSize: '200%'}}/>
+          </Button>
+          <Modal title="Shopping Cart" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+            <div
+              id="scrollableDiv"
+              style={{
+                height: 400,
+                overflow: 'auto',
+                padding: '0 16px',
+                border: '1px solid rgba(140, 140, 140, 0.35)',
+              }}
+            >
+              <InfiniteScroll
+                dataLength={data.length}
+                next={loadMoreData}
+                hasMore={data.length < 50}
+                loader={
+                  <Skeleton
+                    avatar
+                    paragraph={{
+                      rows: 1,
+                    }}
+                    active
+                  />
+                }
+                endMessage={<Divider plain>End of everything</Divider>}
+                scrollableTarget="scrollableDiv"
+              >
+                <List
+                  dataSource={data}
+                  renderItem={(item) => (
+                    <List.Item key={item.email}>
+                      <List.Item.Meta
+                        avatar="icon"
+                        title="food name"
+                        description="desc."
+                      />
+                      <div>remove</div>
+                    </List.Item>
+                  )}
+                />
+              </InfiniteScroll>
+            </div>
+          </Modal>
 
           <Popover
             content={
@@ -103,7 +183,7 @@ const Home = () => {
         </div>
 
         {chatHistory?.map((c, i) => (
-          <div className="mt-10 w-full flex flex-col items-center">
+          <div className="mt-10 w-3/4 flex flex-col items-center justify-around ml-40 text-xl">
             {i === chatHistory.length - 1 ? (
               <>
                 <div className="w-full">
