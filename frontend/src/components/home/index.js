@@ -119,8 +119,8 @@ const Home = () => {
                       <div
                         className={`flex items-center justify-around text-center text-slate-800 text-lg w-40 h-40 bg-slate-50 border-[1px] border-solid border-slate-300 rounded-lg duration-200 ${
                           optionsSelected[i]
-                            ? "border-green-500 bg-transparent"
-                            : "hover:bg-transparent hover:cursor-pointer hover:border-green-500"
+                            ? "border-green-500 bg-white"
+                            : "hover:bg-slate-100 hover:cursor-pointer hover:border-green-500"
                         }`}
                         onClick={() => {
                           onAddToCart(i)
