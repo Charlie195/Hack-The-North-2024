@@ -4,11 +4,16 @@ import React, { useState } from "react"
 import { IoIosCheckmark } from "react-icons/io"
 import Typewriter from "typewriter-effect"
 import axios from "axios"
+import { useAuth0 } from "@auth0/auth0-react"
+import LoginButton from "../loginButton"
+import LogoutButton from "../logoutButton"
 
 const Home = () => {
   const [hideLogo, setHideLogo] = useState(false)
 
-  // const { user } = useAuth0()
+  const { user, isAuthenticated, isLoading } = useAuth0();
+  console.log("here: ", isAuthenticated)
+
   const prompt =
     "Respond to this prompt. Then, at the end, give a list of three COMMON-SEPARATED (IT MUST BE COMMA SEPARATED) products that the user could buy. NO EXPLANATION, NO RECEIPE. NO text other than the three items (THIS IS A MUST)."
   const [chatHistory, setChatHistory] = useState()
@@ -68,6 +73,10 @@ const Home = () => {
 
   return (
     <div className="flex flex-col bg-primary min-h-screen">
+      <div className="flex justify-end">
+        {/* {isAuthenticated ? <LogoutButton /> : <LoginButton />} */}
+        <LoginButton />
+      </div>
       <div>
         <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
       </div>
