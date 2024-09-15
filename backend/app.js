@@ -82,30 +82,62 @@ app.post("/getCart", (req, res) => {
 
 app.post("/addToCart", (req, res) => {
     const email = req.body.email;
+    const name = req.body.name;
     const itemData = req.body.itemData;
 
     console.log(itemData)
 
-    db.collection('users').updateOne(
-        { email: email },
-        { $push: { basket: itemData}},
-        (err, result) => {
-            if (err) {
-                console.error("Error updating user:", err);
-            } else if (result.matchedCount === 0) {
-                console.log("No user found with the specified email.");
-            } else {
-                console.log("User updated successfully.");
+    db.collection('users').findOne({ email: email })
+        .then(user => {
+            if (user) {
+                console.log("User found:", user);
+                db.collection('users').updateOne({ email: email },
+                    { $push: { basket: itemData}})
             }
-          }
-    )
-    .then(() => {
-        res.send("Item added to individual basket successfully.");
-    })
-    .catch((err) => {
-        console.log(err);
-        return err;
-    })
+            else {
+                console.log("woegnni")
+                // Insert a new document with name, email, and itemData
+                db.collection('users').insertOne({
+                    name: name,
+                    email: email,
+                    basket: [itemData] // Assuming you want to start the basket with itemData
+                })
+                .then(result => {
+                    console.log("New user document inserted", result);
+                    // Optionally, send a response back to the client indicating success
+                    res.status(201).send("New user created with item in basket");
+                })
+                .catch(insertErr => {
+                    console.error("Error inserting new user document:", insertErr);
+                    // Optionally, send a response back to the client indicating failure
+                    res.status(500).send("Failed to create new user");
+                });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
+
+    // db.collection('users').updateOne(
+    //     { email: email },
+    //     { $push: { basket: itemData}},
+    //     (err, result) => {
+    //         if (err) {
+    //             console.error("Error updating user:", err);
+    //         } else if (result.matchedCount === 0) {
+    //             console.log("No user found with the specified email.");
+    //         } else {
+    //             console.log("User updated successfully.");
+    //         }
+    //       }
+    // )
+    // .then(() => {
+    //     res.send("Item added to individual basket successfully.");
+    // })
+    // .catch((err) => {
+    //     console.log(err);
+    //     return err;
+    // })
 })
 
 
