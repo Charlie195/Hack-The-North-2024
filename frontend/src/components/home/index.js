@@ -174,7 +174,7 @@ const Home = () => {
         <img src="CollabCartLogo.png" hidden={hideLogo} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" draggable={false}></img>
       </div>
       <div className="flex-1 overflow-auto">
-        <div className="flex justify-between">
+        <div className="">
           {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -191,7 +191,8 @@ const Home = () => {
             </svg> */}
           <Button
             onClick={showModal}
-            className="ml-4 mt-4 h-12 bg-grey shadow-lg"
+            className="ml-4 mt-4 h-12 bg-grey shadow-lg fixed left-4"
+            hidden={!isAuthenticated}
           >
             <ShoppingCartOutlined style={{ fontSize: "200%" }} />
           </Button>
@@ -206,11 +207,12 @@ const Home = () => {
             </div>
           </Modal>
 
-          
-          {!isLoading && <>
-              <LoginButton />
-              <LogoutButton />
-          </>}
+          <div className="fixed right-4">
+            {!isLoading && <>
+                <LoginButton />
+                <LogoutButton />
+            </>}
+          </div>
         </div>
         <div className="flex flex-col items-center max-h-[680px] overflow-y-scroll">
           {chatHistory?.map((c, i) => (
