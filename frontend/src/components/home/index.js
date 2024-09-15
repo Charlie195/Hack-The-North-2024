@@ -1,6 +1,7 @@
 import React from "react"
 
 import { Input} from "antd"
+<<<<<<< Updated upstream
 // import { Menu } from 'antd';
 
 // const items = [
@@ -39,6 +40,25 @@ const Home = () => {
 //   };
 //   const [container, setContainer] = React.useState(null);
   
+=======
+
+
+// // the following two are for the scroll box
+// const containerStyle = {
+//   width: '25%',
+//   height: 100,
+//   overflow: 'auto',
+//   boxShadow: '0 0 0 1px #1677ff',
+//   scrollbarWidth: 'thin',
+//   scrollbarColor: 'unset',
+// };
+// const style = {
+//   width: '100%',
+//   height: 1000, // change it later
+// };
+
+const Home = () => {
+>>>>>>> Stashed changes
   return (
     <div className="flex flex-col bg-gray-300 min-h-screen">
       <div className="flex-1 overflow-auto">
