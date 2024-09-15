@@ -6,7 +6,7 @@ import Typewriter from "typewriter-effect"
 
 const Home = () => {
   const prompt =
-    "Respond to this prompt. Then, at the end, give a list of three comma-separated products that the user could buy. with no explanation. no text other than the three items (THIS IS A MUST)."
+    "Respond to this prompt. Then, at the end, give a list of three COMMON-SEPARATED (IT MUST BE COMMA SEPARATED) products that the user could buy. NO EXPLANATION, NO RECEIPE. NO text other than the three items (THIS IS A MUST)."
   const [chatHistory, setChatHistory] = useState()
   const groq = new Groq({
     apiKey: process.env.REACT_APP_GROQ_API_KEY,
@@ -15,7 +15,7 @@ const Home = () => {
   const [showOptions, setShowOptions] = useState(true)
   const [options, setOptions] = useState()
   const [optionsSelected, setOptionsSelected] = useState([false, false, false])
-
+  const [input, setInput] = useState("")
   const onAddToCart = (i) => {
     setOptionsSelected(optionsSelected.map((t, j) => (i === j ? true : t)))
   }
@@ -30,10 +30,6 @@ const Home = () => {
 
   async function askGroq() {
     const chatCompletion = await getGroqChatCompletion()
-    setTimeout(() => {
-      setShowOptions(true)
-      setOptionsSelected([false, false, false])
-    }, chatCompletion.choices[0]?.message?.content.length * 10 ?? 0)
     setChatHistory([
       ...(chatHistory ?? []),
       processString(chatCompletion.choices[0]?.message?.content || "")[0],
@@ -49,9 +45,7 @@ const Home = () => {
       messages: [
         {
           role: "user",
-          content: `current shopping cart:
-          i want to make a avocado smoothie yes
-          ${prompt}`,
+          content: `${prompt} ${input}`,
         },
       ],
       temperature: 0,
@@ -60,14 +54,8 @@ const Home = () => {
   }
 
   return (
-    <div
-      className="flex flex-col bg-gray-300 min-h-screen"
-      onClick={() => {
-        askGroq()
-      }}
-    >
+    <div className="flex flex-col bg-gray-300 min-h-screen">
       <div className="flex-1 overflow-auto">
-        
         <div className="flex justify-between">
           <button aria-label="Open Shopping Cart" onclick="handleButtonClick()">
             <svg
@@ -108,7 +96,13 @@ const Home = () => {
                 <div className="w-full">
                   <Typewriter
                     onInit={(typewriter) => {
-                      typewriter.typeString(c).start()
+                      typewriter
+                        .typeString(c)
+                        .callFunction(() => {
+                          setShowOptions(true)
+                          setOptionsSelected([false, false, false])
+                        })
+                        .start()
                     }}
                     options={{
                       autoStart: true,
@@ -123,7 +117,7 @@ const Home = () => {
                   <div className="flex w-fit space-x-10 mt-4">
                     {options.map((o, i) => (
                       <div
-                        className={`flex items-center justify-around text-slate-800 text-lg w-40 h-40 bg-slate-50 border-[1px] border-solid border-slate-300 rounded-lg duration-200 ${
+                        className={`flex items-center justify-around text-center text-slate-800 text-lg w-40 h-40 bg-slate-50 border-[1px] border-solid border-slate-300 rounded-lg duration-200 ${
                           optionsSelected[i]
                             ? "border-green-500 bg-transparent"
                             : "hover:bg-transparent hover:cursor-pointer hover:border-green-500"
@@ -154,6 +148,14 @@ const Home = () => {
         <Input
           placeholder="Enter your request"
           className="md:w-2/3 1/2 shadow-lg"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setInput("")
+              askGroq()
+            }
+          }}
         />
       </div>
     </div>
